@@ -756,3 +756,25 @@ hr {
     margin-top: 90px !important; }
   .game-message .lower {
     margin-top: 30px !important; } }
+
+
+  /* Scroll effect for site experience replacing default scrollbar  with site themed one*/
+
+  ::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #faf8f0; /* Darker background for a modern look */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #fdc595, #f2b076); /* Gradient for a premium look */
+    border-radius: 10px;
+    border: 1px solid #a39662; /* Adds spacing effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #f2b076, #e89a5e); /* Subtle color change on hover */
+}
