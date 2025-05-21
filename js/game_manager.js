@@ -11,6 +11,8 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
 
   this.setup();
+
+  this.previousState = null; // FIXME add variable to store previous step
 }
 
 // Restart the game
@@ -128,6 +130,9 @@ GameManager.prototype.moveTile = function (tile, cell) {
 
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
+  // FIXME remember step status
+  this.saveState();
+
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
 
@@ -269,4 +274,34 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
+};
+
+// FIXME previous step method
+GameManager.prototype.saveState = function () {
+  this.previousState = {
+    grid: this.grid.serialize(),
+    score: this.score,
+    over: this.over,
+    won: this.won,
+    keepPlaying: this.keepPlaying
+  };
+};
+// FIXME Add rollback method
+GameManager.prototype.revert = function () {
+  if (!this.previousState) return false;
+
+  this.grid = new Grid(this.previousState.grid.size, this.previousState.grid.cells);
+  this.score = this.previousState.score;
+  this.over = this.previousState.over;
+  this.won = this.previousState.won;
+  this.keepPlaying = this.previousState.keepPlaying;
+
+  this.actuator.actuate(this.grid, {
+    score: this.score,
+    over: this.over,
+    won: this.won,
+    terminated: this.over || this.won
+  });
+
+  return true;
 };

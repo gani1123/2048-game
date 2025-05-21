@@ -526,6 +526,11 @@ hr {
     margin-top: 2px;
   }
 
+  #revert-btn {
+    background: #8f7a66;
+    color: white;
+  }
+
   // Render the game field at the right width
   @include game-field;
 
