@@ -533,6 +533,24 @@ hr {
 .game-explanation {
   margin-top: 50px; }
 
+.achievement-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffeb3b;
+  color: #333;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 1.5em;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 9999;
+  display: none;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
 @media screen and (max-width: 520px) {
   html, body {
     font-size: 15px; }

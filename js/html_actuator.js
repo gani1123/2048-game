@@ -5,6 +5,7 @@ function HTMLActuator() {
   this.messageContainer = document.querySelector(".game-message");
 
   this.score = 0;
+  this.achievementContainer = null;
 }
 
 HTMLActuator.prototype.actuate = function (grid, metadata) {
@@ -23,6 +24,11 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 
     self.updateScore(metadata.score);
     self.updateBestScore(metadata.bestScore);
+
+    // Exibe conquista se houver
+    if (metadata.achievement) {
+      self.showAchievement(metadata.achievement);
+    }
 
     if (metadata.terminated) {
       if (metadata.over) {
@@ -136,4 +142,24 @@ HTMLActuator.prototype.clearMessage = function () {
   // IE only takes one value to remove at a time.
   this.messageContainer.classList.remove("game-won");
   this.messageContainer.classList.remove("game-over");
+};
+
+HTMLActuator.prototype.showAchievement = function (value) {
+  if (!this.achievementContainer) {
+    this.achievementContainer = document.createElement("div");
+    this.achievementContainer.className = "achievement-message";
+    document.body.appendChild(this.achievementContainer);
+  }
+  this.achievementContainer.textContent = "Conquista: tile " + value + "!";
+  this.achievementContainer.style.display = "block";
+  this.achievementContainer.style.opacity = 1;
+  // Fade out após 2 segundos
+  setTimeout(function() {
+    var el = document.querySelector('.achievement-message');
+    if (el) {
+      el.style.transition = "opacity 1s";
+      el.style.opacity = 0;
+      setTimeout(function() { el.style.display = "none"; }, 1000);
+    }
+  }, 2000);
 };
