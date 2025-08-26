@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+    - echo Logging in to Amazon ECR...
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 547639877846.dkr.ecr.us-east-1.amazonaws.com
+    - REPO_URI=547639877846.dkr.ecr.us-east-1.amazonaws.com/ketans_game_repo2048
+    - IMAGE_TAG=latest
+
+  build:
+    commands:
+    - echo Building the Docker image...
+    - docker build -t $REPO_URI:$IMAGE_TAG .
+
+  post_build:
+    commands:
+    - echo Pushing the Docker image...
+    - docker push $REPO_URI:$IMAGE_TAG
+    - echo Writing image definitions file...
+    - printf '[{"name":"2048-game","imageUri":"%s"}]' $REPO_URI:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+  - imagedefinitions.json
