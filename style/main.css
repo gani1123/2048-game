@@ -147,6 +147,7 @@ hr {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
   -ms-touch-action: none;
   touch-action: none;
   background: #bbada0;
@@ -507,28 +508,204 @@ hr {
   -moz-animation-fill-mode: backwards;
   animation-fill-mode: backwards; }
 
+.above-game {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px; }
+
 .above-game:after {
-  content: "";
-  display: block;
-  clear: both; }
+  content: none; }
 
 .game-intro {
-  float: left;
-  line-height: 42px;
+  flex: 1 1 200px;
+  line-height: 1.6;
   margin-bottom: 0; }
 
+.ai-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1 1 260px;
+  justify-content: flex-end;
+  flex-wrap: wrap; }
+
 .restart-button {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #8f7a66;
   border-radius: 3px;
   padding: 0 20px;
   text-decoration: none;
   color: #f9f6f2;
   height: 40px;
-  line-height: 42px;
-  display: block;
+  line-height: 1;
   text-align: center;
-  float: right; }
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
+
+.restart-button:hover {
+  background: #7f6a56;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(143, 122, 102, 0.35); }
+
+.restart-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 9px rgba(143, 122, 102, 0.3); }
+
+.restart-button:focus-visible {
+  outline: 3px solid rgba(143, 122, 102, 0.5);
+  outline-offset: 2px; }
+
+.autoplay-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #4caf50;
+  border-radius: 50px;
+  padding: 0 22px;
+  border: none;
+  color: #f9f6f2;
+  height: 40px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-left: auto;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
+
+.autoplay-button:hover {
+  background: #43a047;
+  box-shadow: 0 6px 16px rgba(67, 160, 71, 0.35);
+  transform: translateY(-1px); }
+
+.autoplay-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(67, 160, 71, 0.3); }
+
+.autoplay-button:focus-visible {
+  outline: 3px solid rgba(76, 175, 80, 0.6);
+  outline-offset: 2px; }
+
+.autoplay-button.running {
+  background: #e53935;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.35); }
+
+.autoplay-button.running:hover {
+  background: #d32f2f;
+  box-shadow: 0 6px 16px rgba(211, 47, 47, 0.35); }
+
+.autoplay-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  font-size: 0.85em;
+  transition: transform 150ms ease; }
+
+.autoplay-button.running .autoplay-icon {
+  transform: scale(1.05); }
+
+.autoplay-text {
+  font-size: 0.85em;
+  white-space: nowrap; }
+
+.speed-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(60, 58, 50, 0.92);
+  border-radius: 999px;
+  color: #fdf7e9;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  box-shadow: 0 6px 14px rgba(60, 58, 50, 0.35);
+}
+
+.speed-label {
+  font-weight: 600;
+}
+
+.speed-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 150px;
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(253, 216, 53, 0.65), rgba(255, 111, 0, 0.65));
+  outline: none;
+  cursor: pointer;
+  transition: filter 150ms ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.speed-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(253, 216, 53, 0.65), rgba(255, 111, 0, 0.65));
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.speed-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(253, 216, 53, 0.65), rgba(255, 111, 0, 0.65));
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.speed-slider:hover {
+  filter: brightness(1.1);
+}
+
+.speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffe082;
+  border: 2px solid #ff8f00;
+  box-shadow: 0 4px 10px rgba(255, 111, 0, 0.45);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.speed-slider:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 5px 12px rgba(255, 111, 0, 0.55);
+}
+
+.speed-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ff8f00;
+  background: #ffe082;
+  box-shadow: 0 4px 10px rgba(255, 111, 0, 0.45);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.speed-slider:active::-moz-range-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 5px 12px rgba(255, 111, 0, 0.55);
+}
+
+.speed-value {
+  min-width: 54px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #ffe082;
+  font-weight: 600;
+}
 
 .game-explanation {
   margin-top: 50px; }
@@ -563,12 +740,32 @@ hr {
     box-sizing: border-box;
     line-height: 1.65; }
 
-  .restart-button {
-    width: 42%;
-    padding: 0;
-    display: block;
+  .ai-controls {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .restart-button, .autoplay-button {
+    width: auto;
+    padding: 0 18px;
     box-sizing: border-box;
-    margin-top: 2px; }
+    margin-top: 2px;
+    margin-right: 5px; }
+
+  .autoplay-button {
+    justify-content: center;
+    margin-top: 5px; }
+
+  .speed-control {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 12px;
+  }
+
+  .speed-slider {
+    width: 100%;
+  }
 
   .game-container {
     margin-top: 17px;
@@ -577,9 +774,10 @@ hr {
     cursor: default;
     -webkit-touch-callout: none;
     -ms-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
     -ms-touch-action: none;
     touch-action: none;
     background: #bbada0;
