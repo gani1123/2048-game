@@ -29,6 +29,17 @@
     <div class="above-game">
       <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
       <a class="restart-button">New Game</a>
+      <div class="ai-controls">
+        <button class="autoplay-button" type="button" aria-pressed="false">
+          <span class="autoplay-icon" aria-hidden="true">▶</span>
+          <span class="autoplay-text">Start AI</span>
+        </button>
+        <label class="speed-control" for="ai-speed">
+          <span class="speed-label">Speed</span>
+          <input id="ai-speed" class="speed-slider" type="range" min="0" max="1200" step="5" value="80" aria-valuemin="0" aria-valuemax="1200" aria-valuenow="80" aria-label="AI move delay in milliseconds">
+          <span class="speed-value" aria-live="polite">80 ms</span>
+        </label>
+      </div>
     </div>
 
     <div class="game-container">
@@ -94,6 +105,7 @@
   <script src="js/tile.js"></script>
   <script src="js/local_storage_manager.js"></script>
   <script src="js/game_manager.js"></script>
+  <script src="js/ai.js"></script>
   <script src="js/application.js"></script>
 </body>
 </html>
