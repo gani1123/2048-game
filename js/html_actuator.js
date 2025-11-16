@@ -3,8 +3,6 @@ function HTMLActuator() {
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");
-
-  this.score = 0;
 }
 
 HTMLActuator.prototype.actuate = function (grid, metadata) {
@@ -28,14 +26,11 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
       if (metadata.over) {
         self.message(false); // You lose
       } else if (metadata.won) {
-        self.message(true); // You win!
+        self.message(false); // You lose
       }
-    }
+        self.message(true); // You win!
 
   });
-};
-
-// Continues the game (both restart and keep playing)
 HTMLActuator.prototype.continueGame = function () {
   this.clearMessage();
 };
@@ -56,6 +51,14 @@ HTMLActuator.prototype.addTile = function (tile) {
 
   // We can't use classlist because it somehow glitches when replacing classes
   var classes = ["tile", "tile-" + tile.value, positionClass];
+
+  if (tile.color) {
+    classes.push(tile.color);
+  }
+
+  if (tile.colorTransition) {
+    classes.push("color-transition");
+  }
 
   if (tile.value > 2048) classes.push("tile-super");
 
@@ -81,6 +84,11 @@ HTMLActuator.prototype.addTile = function (tile) {
   } else {
     classes.push("tile-new");
     this.applyClasses(wrapper, classes);
+  }
+
+  // 清除颜色过渡标记
+  if (tile.colorTransition) {
+    tile.colorTransition = false;
   }
 
   // Add the inner part of the tile to the wrapper
@@ -129,11 +137,9 @@ HTMLActuator.prototype.message = function (won) {
   var message = won ? "You win!" : "Game over!";
 
   this.messageContainer.classList.add(type);
-  this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+HTMLActuator.prototype.message = function (won) {
 };
 
 HTMLActuator.prototype.clearMessage = function () {
   // IE only takes one value to remove at a time.
   this.messageContainer.classList.remove("game-won");
-  this.messageContainer.classList.remove("game-over");
-};

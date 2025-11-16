@@ -1,0 +1,49 @@
+/* 双色模式样式 */
+.game-container.double-color-mode {
+  /* 棋盘格背景 */
+  background: linear-gradient(45deg, #ff6b6b 25%, #4ecdc4 25%, #4ecdc4 50%, #ff6b6b 50%, #ff6b6b 75%, #4ecdc4 75%, #4ecdc4 100%);
+  background-size: 115px 115px;
+}
+
+/* 红蓝色块 */
+.tile.red {
+  background: #ff6b6b;
+  color: white;
+}
+
+.tile.blue {
+  background: #4ecdc4;
+  color: white;
+}
+
+/* 颜色渐变动画 */
+@keyframes color-transition {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.tile.color-transition {
+  animation: color-transition 0.3s ease-in-out;
+}
+
+/* 模式选择器样式 */
+.game-mode-selector {
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mode-option {
+  padding: 10px 20px;
+  background: #8f7a66;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.mode-option.active {
+  background: #edc22e;
+}

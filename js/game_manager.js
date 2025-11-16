@@ -5,12 +5,7 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.actuator       = new Actuator;
 
   this.startTiles     = 2;
-
-  this.inputManager.on("move", this.move.bind(this));
-  this.inputManager.on("restart", this.restart.bind(this));
-  this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
-
-  this.setup();
+  this.gameMode       = "normal"; // 默认普通模式
 }
 
 // Restart the game
@@ -69,7 +64,10 @@ GameManager.prototype.addStartTiles = function () {
 GameManager.prototype.addRandomTile = function () {
   if (this.grid.cellsAvailable()) {
     var value = Math.random() < 0.9 ? 2 : 4;
-    var tile = new Tile(this.grid.randomAvailableCell(), value);
+    var cell = this.grid.randomAvailableCell();
+    // 根据格子位置决定颜色（棋盘格）
+    var color = (cell.x + cell.y) % 2 === 0 ? 'red' : 'blue';
+    var tile = new Tile(cell, value, color);
 
     this.grid.insertTile(tile);
   }
@@ -101,9 +99,7 @@ GameManager.prototype.actuate = function () {
 // Represent the current game as an object
 GameManager.prototype.serialize = function () {
   return {
-    grid:        this.grid.serialize(),
-    score:       this.score,
-    over:        this.over,
+    terminated: this.isGameTerminated(),
     won:         this.won,
     keepPlaying: this.keepPlaying
   };
@@ -152,28 +148,63 @@ GameManager.prototype.move = function (direction) {
         var positions = self.findFarthestPosition(cell, vector);
         var next      = self.grid.cellContent(positions.next);
 
-        // Only one merger per row traversal?
-        if (next && next.value === tile.value && !next.mergedFrom) {
-          var merged = new Tile(positions.next, tile.value * 2);
-          merged.mergedFrom = [tile, next];
+        if (self.gameMode === "double-color") {
+          // 双色模式处理
+          if (next) {
+            if (tile.color !== next.color) {
+              // 异色方块相撞 - 染色
+              next.color = tile.color;
+              next.colorTransition = true; // 标记需要颜色渐变动画
+              moved = true;
+            } else if (next.value === tile.value && !next.mergedFrom) {
+              // 同色同值 - 合并
+              var merged = new Tile(positions.next, tile.value * 2, tile.color);
+              merged.mergedFrom = [tile, next];
 
-          self.grid.insertTile(merged);
-          self.grid.removeTile(tile);
+              self.grid.insertTile(merged);
+              self.grid.removeTile(tile);
 
-          // Converge the two tiles' positions
-          tile.updatePosition(positions.next);
+              // Converge the two tiles' positions
+              tile.updatePosition(positions.next);
 
-          // Update the score
-          self.score += merged.value;
+              // Update the score
+              self.score += merged.value;
 
-          // The mighty 2048 tile
-          if (merged.value === 2048) self.won = true;
+              // The mighty 2048 tile
+              if (merged.value === 2048) self.won = true;
+              moved = true;
+            }
+          } else {
+            // 移动到空位置
+            self.moveTile(tile, positions.farthest);
+            if (!self.positionsEqual(cell, tile)) {
+              moved = true; // The tile moved from its original cell!
+            }
+          }
         } else {
-          self.moveTile(tile, positions.farthest);
-        }
+          // 普通模式处理
+          if (next && next.value === tile.value && !next.mergedFrom) {
+            var merged = new Tile(positions.next, tile.value * 2);
+            merged.mergedFrom = [tile, next];
 
-        if (!self.positionsEqual(cell, tile)) {
-          moved = true; // The tile moved from its original cell!
+            self.grid.insertTile(merged);
+            self.grid.removeTile(tile);
+
+            // Converge the two tiles' positions
+            tile.updatePosition(positions.next);
+
+            // Update the score
+            self.score += merged.value;
+
+            // The mighty 2048 tile
+            if (merged.value === 2048) self.won = true;
+            moved = true;
+          } else {
+            self.moveTile(tile, positions.farthest);
+            if (!self.positionsEqual(cell, tile)) {
+              moved = true; // The tile moved from its original cell!
+            }
+          }
         }
       }
     });
@@ -196,13 +227,6 @@ GameManager.prototype.getVector = function (direction) {
   var map = {
     0: { x: 0,  y: -1 }, // Up
     1: { x: 1,  y: 0 },  // Right
-    2: { x: 0,  y: 1 },  // Down
-    3: { x: -1, y: 0 }   // Left
-  };
-
-  return map[direction];
-};
-
 // Build a list of positions to traverse in the right order
 GameManager.prototype.buildTraversals = function (vector) {
   var traversals = { x: [], y: [] };
@@ -236,7 +260,10 @@ GameManager.prototype.findFarthestPosition = function (cell, vector) {
 };
 
 GameManager.prototype.movesAvailable = function () {
-  return this.grid.cellsAvailable() || this.tileMatchesAvailable();
+  if (this.grid.cellsAvailable()) return true;
+  if (this.tileMatchesAvailable()) return true;
+  if (this.gameMode === "double-color" && this.tileColorChangesAvailable()) return true;
+  return false;
 };
 
 // Check for available matches between tiles (more expensive check)
@@ -258,6 +285,33 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
           if (other && other.value === tile.value) {
             return true; // These two tiles can be merged
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+};
+
+GameManager.prototype.tileColorChangesAvailable = function () {
+  var self = this;
+
+  var tile;
+
+  for (var x = 0; x < this.size; x++) {
+    for (var y = 0; y < this.size; y++) {
+      tile = this.grid.cellContent({ x: x, y: y });
+
+      if (tile) {
+        for (var direction = 0; direction < 4; direction++) {
+          var vector = self.getVector(direction);
+          var cell   = { x: x + vector.x, y: y + vector.y };
+
+          var other  = self.grid.cellContent(cell);
+
+          if (other && tile.color !== other.color) {
+            return true; // 存在可以染色的方块
           }
         }
       }
