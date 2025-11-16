@@ -199,7 +199,23 @@ hr {
       .game-container .game-message.game-won a.keep-playing-button {
         display: inline-block; }
     .game-container .game-message.game-won, .game-container .game-message.game-over {
-      display: block; }
+      display: block;
+    }
+
+.events-log {
+  margin: 10px 0;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 14px;
+  text-align: left;
+}
+
+.event-item {
+  margin: 5px 0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.8);
+}
 
 .grid-container {
   position: absolute;
@@ -528,7 +544,112 @@ hr {
   line-height: 42px;
   display: block;
   text-align: center;
-  float: right; }
+  float: right;
+}
+
+.game-mode-selector {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.mode-option {
+  display: inline-block;
+  background: #8f7a66;
+  border-radius: 3px;
+  padding: 0 15px;
+  margin: 0 5px;
+  text-decoration: none;
+  color: #f9f6f2;
+  height: 30px;
+  line-height: 32px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.mode-option:hover {
+  background: #9f8b77;
+}
+
+.mode-option.selected {
+  background: #edc22e;
+  color: #ffffff;
+}
+
+.event-notification {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.event-notification.show {
+  opacity: 1;
+}
+
+.shield-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 215, 0, 0.8);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 1000;
+  display: none;
+}
+
+.shield-indicator.show {
+  display: block;
+}
+
+.leaderboard-container {
+  margin: 20px 0;
+  padding: 10px;
+  background: #bbada0;
+  border-radius: 5px;
+}
+
+.leaderboard-container h3 {
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  text-align: center;
+}
+
+.leaderboard-list {
+  background: #ffffff;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.leaderboard-item {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-item .rank {
+  font-weight: bold;
+  width: 20px;
+}
+
+.leaderboard-item .score {
+  font-weight: bold;
+  color: #edc22e;
+}
 
 .game-explanation {
   margin-top: 50px; }

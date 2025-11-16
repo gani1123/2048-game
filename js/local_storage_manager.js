@@ -21,6 +21,7 @@ window.fakeStorage = {
 function LocalStorageManager() {
   this.bestScoreKey     = "bestScore";
   this.gameStateKey     = "gameState";
+  this.leaderboardKey   = "leaderboard";
 
   var supported = this.localStorageSupported();
   this.storage = supported ? window.localStorage : window.fakeStorage;
@@ -60,4 +61,25 @@ LocalStorageManager.prototype.setGameState = function (gameState) {
 
 LocalStorageManager.prototype.clearGameState = function () {
   this.storage.removeItem(this.gameStateKey);
+};
+
+// 排行榜相关方法
+LocalStorageManager.prototype.getLeaderboard = function () {
+  var leaderboardJSON = this.storage.getItem(this.leaderboardKey);
+  return leaderboardJSON ? JSON.parse(leaderboardJSON) : [];
+};
+
+LocalStorageManager.prototype.addToLeaderboard = function (score, eventCount, duration) {
+  var leaderboard = this.getLeaderboard();
+  var entry = {
+    score: score,
+    eventCount: eventCount,
+    duration: duration,
+    timestamp: new Date().toISOString()
+  };
+  leaderboard.push(entry);
+  // 按分数降序排序，保留前10条
+  leaderboard.sort(function(a, b) { return b.score - a.score; });
+  if (leaderboard.length > 10) leaderboard = leaderboard.slice(0, 10);
+  this.storage.setItem(this.leaderboardKey, JSON.stringify(leaderboard));
 };

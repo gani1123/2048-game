@@ -3,6 +3,8 @@ function HTMLActuator() {
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");
+  this.eventNotification = document.querySelector(".event-notification");
+  this.shieldIndicator = document.querySelector(".shield-indicator");
 
   this.score = 0;
 }
@@ -26,11 +28,14 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 
     if (metadata.terminated) {
       if (metadata.over) {
-        self.message(false); // You lose
+        self.message(false, metadata.events); // You lose
       } else if (metadata.won) {
-        self.message(true); // You win!
+        self.message(true, metadata.events); // You win!
       }
     }
+    
+    // 更新护盾状态
+    self.updateShield(metadata.shield);
 
   });
 };
@@ -124,16 +129,53 @@ HTMLActuator.prototype.updateBestScore = function (bestScore) {
   this.bestContainer.textContent = bestScore;
 };
 
-HTMLActuator.prototype.message = function (won) {
+HTMLActuator.prototype.message = function (won, events) {
   var type    = won ? "game-won" : "game-over";
   var message = won ? "You win!" : "Game over!";
 
   this.messageContainer.classList.add(type);
   this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+  
+  // 显示事件记录
+  var eventsLog = this.messageContainer.querySelector('.events-log');
+  eventsLog.innerHTML = '';
+  
+  if (events && events.length > 0) {
+    eventsLog.innerHTML = '<h4>事件记录：</h4>';
+    events.forEach(function(event, index) {
+      var eventItem = document.createElement('div');
+      eventItem.classList.add('event-item');
+      eventItem.textContent = (index + 1) + '. ' + event;
+      eventsLog.appendChild(eventItem);
+    });
+  } else {
+    eventsLog.innerHTML = '<p>没有触发任何事件</p>';
+  }
 };
 
 HTMLActuator.prototype.clearMessage = function () {
   // IE only takes one value to remove at a time.
   this.messageContainer.classList.remove("game-won");
   this.messageContainer.classList.remove("game-over");
+};
+
+// 显示事件通知
+HTMLActuator.prototype.showEventNotification = function(eventName) {
+  this.eventNotification.textContent = eventName;
+  this.eventNotification.classList.add("show");
+  
+  // 3秒后隐藏
+  setTimeout(() => {
+    this.eventNotification.classList.remove("show");
+  }, 3000);
+};
+
+// 更新护盾状态
+HTMLActuator.prototype.updateShield = function(shieldCount) {
+  if (shieldCount > 0) {
+    this.shieldIndicator.textContent = "护盾: " + shieldCount;
+    this.shieldIndicator.classList.add("show");
+  } else {
+    this.shieldIndicator.classList.remove("show");
+  }
 };
