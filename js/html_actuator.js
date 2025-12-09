@@ -3,6 +3,7 @@ function HTMLActuator() {
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");
+  this.gridContainer    = document.querySelector(".grid-container");
 
   this.score = 0;
 }
@@ -136,4 +137,23 @@ HTMLActuator.prototype.clearMessage = function () {
   // IE only takes one value to remove at a time.
   this.messageContainer.classList.remove("game-won");
   this.messageContainer.classList.remove("game-over");
+};
+
+HTMLActuator.prototype.buildGrid = function (size) {
+  this.clearContainer(this.gridContainer);
+
+  for (var y = 0; y < size; y++) {
+    var row = document.createElement("div");
+    row.className = "grid-row";
+
+    for (var x = 0; x < size; x++) {
+      var cell = document.createElement("div");
+      cell.className = "grid-cell";
+      row.appendChild(cell);
+    }
+
+    this.gridContainer.appendChild(row);
+  }
+
+  this.gridContainer.setAttribute("data-size", size);
 };

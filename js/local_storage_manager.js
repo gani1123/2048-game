@@ -21,9 +21,12 @@ window.fakeStorage = {
 function LocalStorageManager() {
   this.bestScoreKey     = "bestScore";
   this.gameStateKey     = "gameState";
+  this.gridSizeKey      = "gridSize";
 
   var supported = this.localStorageSupported();
   this.storage = supported ? window.localStorage : window.fakeStorage;
+
+  this.currentSize = this.getGridSize() || 4;
 }
 
 LocalStorageManager.prototype.localStorageSupported = function () {
@@ -39,25 +42,40 @@ LocalStorageManager.prototype.localStorageSupported = function () {
   }
 };
 
-// Best score getters/setters
+// Grid size getters/setters
+LocalStorageManager.prototype.getGridSize = function () {
+  return parseInt(this.storage.getItem(this.gridSizeKey)) || null;
+};
+
+LocalStorageManager.prototype.setGridSize = function (size) {
+  this.currentSize = size;
+  this.storage.setItem(this.gridSizeKey, size);
+};
+
+// Best score getters/setters (per difficulty)
 LocalStorageManager.prototype.getBestScore = function () {
-  return this.storage.getItem(this.bestScoreKey) || 0;
+  var key = this.bestScoreKey + "-" + this.currentSize;
+  return this.storage.getItem(key) || 0;
 };
 
 LocalStorageManager.prototype.setBestScore = function (score) {
-  this.storage.setItem(this.bestScoreKey, score);
+  var key = this.bestScoreKey + "-" + this.currentSize;
+  this.storage.setItem(key, score);
 };
 
-// Game state getters/setters and clearing
+// Game state getters/setters and clearing (per difficulty)
 LocalStorageManager.prototype.getGameState = function () {
-  var stateJSON = this.storage.getItem(this.gameStateKey);
+  var key = this.gameStateKey + "-" + this.currentSize;
+  var stateJSON = this.storage.getItem(key);
   return stateJSON ? JSON.parse(stateJSON) : null;
 };
 
 LocalStorageManager.prototype.setGameState = function (gameState) {
-  this.storage.setItem(this.gameStateKey, JSON.stringify(gameState));
+  var key = this.gameStateKey + "-" + this.currentSize;
+  this.storage.setItem(key, JSON.stringify(gameState));
 };
 
 LocalStorageManager.prototype.clearGameState = function () {
-  this.storage.removeItem(this.gameStateKey);
+  var key = this.gameStateKey + "-" + this.currentSize;
+  this.storage.removeItem(key);
 };
