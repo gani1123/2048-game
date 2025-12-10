@@ -3,6 +3,9 @@ function HTMLActuator() {
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");
+  this.eventMessageContainer = document.querySelector(".event-message");
+  this.freezeSelectorContainer = document.querySelector(".freeze-selector");
+  this.directionBlockersContainer = document.querySelector(".direction-blockers");
 
   this.score = 0;
 }
@@ -26,9 +29,9 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 
     if (metadata.terminated) {
       if (metadata.over) {
-        self.message(false); // You lose
+        self.message(false, metadata.eventHistory, metadata.gameTime); // You lose
       } else if (metadata.won) {
-        self.message(true); // You win!
+        self.message(true, metadata.eventHistory, metadata.gameTime); // You win!
       }
     }
 
@@ -55,14 +58,14 @@ HTMLActuator.prototype.addTile = function (tile) {
   var positionClass = this.positionClass(position);
 
   // We can't use classlist because it somehow glitches when replacing classes
-  var classes = ["tile", "tile-" + tile.value, positionClass];
+  var classes = ["tile", tile.isPoison ? "tile-poison" : "tile-" + tile.value, positionClass];
 
-  if (tile.value > 2048) classes.push("tile-super");
+  if (tile.value > 2048 && !tile.isPoison) classes.push("tile-super");
 
   this.applyClasses(wrapper, classes);
 
   inner.classList.add("tile-inner");
-  inner.textContent = tile.value;
+  inner.textContent = tile.isPoison ? 'X' : tile.value;
 
   if (tile.previousPosition) {
     // Make sure that the tile gets rendered in the previous position first
@@ -124,16 +127,156 @@ HTMLActuator.prototype.updateBestScore = function (bestScore) {
   this.bestContainer.textContent = bestScore;
 };
 
-HTMLActuator.prototype.message = function (won) {
+HTMLActuator.prototype.message = function (won, eventHistory, gameTime) {
   var type    = won ? "game-won" : "game-over";
   var message = won ? "You win!" : "Game over!";
 
+  if (eventHistory && eventHistory.length > 0) {
+    const positiveEvents = eventHistory.filter(e => e.isPositive).length;
+    const negativeEvents = eventHistory.filter(e => !e.isPositive).length;
+    const minutes = Math.floor(gameTime / 60000);
+    const seconds = Math.floor((gameTime % 60000) / 1000);
+    
+    message += `<br><br>游戏时长: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    message += `<br>触发事件: ${eventHistory.length}次`;
+    message += `<br>正面事件: ${positiveEvents}次 | 负面事件: ${negativeEvents}次`;
+    message += `<br><strong>事件记录:</strong><br>${eventHistory.map(e => `• ${e.isPositive ? '+' : '-'} ${e.name}`).join('<br>')}`;
+  }
+
   this.messageContainer.classList.add(type);
-  this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+  this.messageContainer.getElementsByTagName("p")[0].innerHTML = message;
 };
 
 HTMLActuator.prototype.clearMessage = function () {
   // IE only takes one value to remove at a time.
   this.messageContainer.classList.remove("game-won");
   this.messageContainer.classList.remove("game-over");
+};
+
+// Event UI Methods
+HTMLActuator.prototype.showEventMessage = function(message, type) {
+  this.eventMessageContainer.textContent = message;
+  this.eventMessageContainer.className = `event-message event-${type}`;
+  
+  setTimeout(() => {
+    this.eventMessageContainer.classList.add("event-hidden");
+  }, 3000);
+};
+
+HTMLActuator.prototype.flashTile = function(tile, color) {
+  const tileElement = this.tileContainer.querySelector(`.tile-position-${tile.x + 1}-${tile.y + 1}`);
+  if (tileElement) {
+    tileElement.style.animation = `flash-${color} 1s ease`;
+    setTimeout(() => {
+      tileElement.style.animation = '';
+    }, 1000);
+  }
+};
+
+HTMLActuator.prototype.spawnTile = function(tile) {
+  const tileElement = this.tileContainer.querySelector(`.tile-position-${tile.x + 1}-${tile.y + 1}`);
+  if (tileElement) {
+    tileElement.style.animation = "spawn-glow 1.5s ease";
+  }
+};
+
+HTMLActuator.prototype.showFreezeSelector = function(size, onSelect) {
+  this.clearContainer(this.freezeSelectorContainer);
+  this.freezeSelectorContainer.classList.add('show');
+  
+  const selector = document.createElement('div');
+  selector.className = 'freeze-selector-content';
+  
+  const title = document.createElement('div');
+  title.textContent = '选择要冻结的行或列:';
+  selector.appendChild(title);
+  
+  const rows = document.createElement('div');
+  rows.className = 'freeze-rows';
+  for (let i = 0; i < size; i++) {
+    const rowBtn = document.createElement('button');
+    rowBtn.textContent = `行 ${i + 1}`;
+    rowBtn.onclick = () => {
+      this.hideFreezeSelector();
+      onSelect('row', i);
+    };
+    rows.appendChild(rowBtn);
+  }
+  selector.appendChild(rows);
+  
+  const cols = document.createElement('div');
+  cols.className = 'freeze-cols';
+  for (let i = 0; i < size; i++) {
+    const colBtn = document.createElement('button');
+    colBtn.textContent = `列 ${i + 1}`;
+    colBtn.onclick = () => {
+      this.hideFreezeSelector();
+      onSelect('col', i);
+    };
+    cols.appendChild(colBtn);
+  }
+  selector.appendChild(cols);
+  
+  this.freezeSelectorContainer.appendChild(selector);
+};
+
+HTMLActuator.prototype.hideFreezeSelector = function() {
+  this.clearContainer(this.freezeSelectorContainer);
+  this.freezeSelectorContainer.classList.remove('show');
+};
+
+HTMLActuator.prototype.highlightFrozenLine = function(lineType, index) {
+  this.hideFrozenLine();
+  
+  const highlight = document.createElement('div');
+  highlight.className = `frozen-highlight frozen-${lineType}-${index + 1}`;
+  document.querySelector('.game-container').appendChild(highlight);
+};
+
+HTMLActuator.prototype.hideFrozenLine = function() {
+  const highlights = document.querySelectorAll('.frozen-highlight');
+  highlights.forEach(el => el.remove());
+};
+
+HTMLActuator.prototype.showShield = function() {
+  const shield = document.createElement('div');
+  shield.className = 'lucky-shield';
+  document.querySelector('.game-container').appendChild(shield);
+  
+  setTimeout(() => {
+    shield.classList.add('shield-fade');
+    setTimeout(() => shield.remove(), 1000);
+  }, 3000);
+};
+
+HTMLActuator.prototype.showBlockedDirection = function(direction) {
+  const blocker = document.createElement('div');
+  const dirNames = ['up', 'right', 'down', 'left'];
+  blocker.className = `direction-blocker blocker-${dirNames[direction]}`;
+  blocker.innerHTML = '✕';
+  this.directionBlockersContainer.appendChild(blocker);
+};
+
+HTMLActuator.prototype.hideBlockedDirections = function() {
+  this.clearContainer(this.directionBlockersContainer);
+};
+
+HTMLActuator.prototype.showReverseDirection = function() {
+  const reverse = document.createElement('div');
+  reverse.className = 'reverse-indicator';
+  reverse.innerHTML = '⤴';
+  document.querySelector('.game-container').appendChild(reverse);
+};
+
+HTMLActuator.prototype.hideReverseDirection = function() {
+  const indicators = document.querySelectorAll('.reverse-indicator');
+  indicators.forEach(el => el.remove());
+};
+
+HTMLActuator.prototype.shakeBoard = function() {
+  const container = document.querySelector('.game-container');
+  container.style.animation = 'board-shake 0.5s ease';
+  setTimeout(() => {
+    container.style.animation = '';
+  }, 500);
 };

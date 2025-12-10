@@ -28,53 +28,80 @@
 
     <div class="above-game">
       <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
-      <a class="restart-button">New Game</a>
+    <div class="game-mode-selector">
+      <label><input type="radio" name="game-mode" value="normal" checked> 普通模式</label>
+      <label><input type="radio" name="game-mode" value="event"> 事件模式</label>
+      <label><input type="radio" name="game-mode" value="doom"> 厄运模式</label>
     </div>
+    <a class="restart-button">New Game</a>
+  </div>
+  
+  <div class="event-message"></div>
+  <div class="freeze-selector"></div>
+  <div class="direction-blockers"></div>
 
-    <div class="game-container">
-      <div class="game-message">
-        <p></p>
-        <div class="lower">
-	        <a class="keep-playing-button">Keep going</a>
-          <a class="retry-button">Try again</a>
-        </div>
-      </div>
-
-      <div class="grid-container">
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-      </div>
-
-      <div class="tile-container">
-
+  <div class="game-container">
+    <div class="game-message">
+      <p></p>
+      <div class="lower">
+	      <a class="keep-playing-button">Keep going</a>
+        <a class="retry-button">Try again</a>
       </div>
     </div>
 
-    <p class="game-explanation">
-      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
-    </p>
+    <div class="grid-container">
+      <div class="grid-row">
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+      </div>
+      <div class="grid-row">
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+      </div>
+      <div class="grid-row">
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+      </div>
+      <div class="grid-row">
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+      </div>
+    </div>
+
+    <div class="tile-container">
+
+    </div>
+  </div>
+
+  <p class="game-explanation">
+    <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
+  </p>
+
+    <div class="leaderboard-container" style="margin-top: 20px;">
+        <h3>排行榜</h3>
+        <div id="leaderboard">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #d8d4d0; padding: 5px; text-align: left;">排名</th>
+                        <th style="border: 1px solid #d8d4d0; padding: 5px; text-align: left;">分数</th>
+                        <th style="border: 1px solid #d8d4d0; padding: 5px; text-align: left;">事件数</th>
+                        <th style="border: 1px solid #d8d4d0; padding: 5px; text-align: left;">时长</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
     <hr>
     <p>
     <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.

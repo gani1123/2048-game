@@ -21,6 +21,7 @@ window.fakeStorage = {
 function LocalStorageManager() {
   this.bestScoreKey     = "bestScore";
   this.gameStateKey     = "gameState";
+  this.leaderboardKey   = "leaderboard";
 
   var supported = this.localStorageSupported();
   this.storage = supported ? window.localStorage : window.fakeStorage;
@@ -60,4 +61,29 @@ LocalStorageManager.prototype.setGameState = function (gameState) {
 
 LocalStorageManager.prototype.clearGameState = function () {
   this.storage.removeItem(this.gameStateKey);
+};
+
+// Leaderboard methods
+LocalStorageManager.prototype.getLeaderboard = function () {
+  var leaderboardJSON = this.storage.getItem(this.leaderboardKey);
+  return leaderboardJSON ? JSON.parse(leaderboardJSON) : [];
+};
+
+LocalStorageManager.prototype.addToLeaderboard = function (score, eventCount, gameTime) {
+  const leaderboard = this.getLeaderboard();
+  const entry = {
+    score: score,
+    eventCount: eventCount,
+    gameTime: gameTime,
+    timestamp: Date.now()
+  };
+  
+  leaderboard.push(entry);
+  // Keep only top 10 entries
+  leaderboard.sort((a, b) => b.score - a.score);
+  if (leaderboard.length > 10) {
+    leaderboard.splice(10);
+  }
+  
+  this.storage.setItem(this.leaderboardKey, JSON.stringify(leaderboard));
 };
