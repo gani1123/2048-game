@@ -1,4 +1,5 @@
 # 2048
+
 A small clone of [1024](https://play.google.com/store/apps/details?id=com.veewo.a1024), based on [Saming's 2048](http://saming.fr/p/2048/) (also a clone). 2048 was indirectly inspired by [Threes](https://asherv.com/threes/).
 
 Made just for fun. [Play it here!](http://gabrielecirulli.github.io/2048/)
@@ -11,10 +12,10 @@ The official app can also be found on the [Play Store](https://play.google.com/s
 
 Other notable contributors:
 
- - [TimPetricola](https://github.com/TimPetricola) added best score storage
- - [chrisprice](https://github.com/chrisprice) added custom code for swipe handling on mobile
- - [marcingajda](https://github.com/marcingajda) made swipes work on Windows Phone
- - [mgarciaisaia](https://github.com/mgarciaisaia) added support for Android 2.3
+- [TimPetricola](https://github.com/TimPetricola) added best score storage
+- [chrisprice](https://github.com/chrisprice) added custom code for swipe handling on mobile
+- [marcingajda](https://github.com/marcingajda) made swipes work on Windows Phone
+- [mgarciaisaia](https://github.com/mgarciaisaia) added support for Android 2.3
 
 Many thanks to [rayhaanj](https://github.com/rayhaanj), [Mechazawa](https://github.com/Mechazawa), [grant](https://github.com/grant), [remram44](https://github.com/remram44) and [ghoullier](https://github.com/ghoullier) for the many other good contributions.
 
@@ -27,12 +28,23 @@ Many thanks to [rayhaanj](https://github.com/rayhaanj), [Mechazawa](https://gith
 That screenshot is fake, by the way. I never reached 2048 :smile:
 
 ## Contributing
+
 Changes and improvements are more than welcome! Feel free to fork and open a pull request. Please make your changes in a specific branch and request to pull into `master`! If you can, please make sure the game fully works before sending the PR, as that will help speed up the process.
 
 You can find the same information in the [contributing guide.](https://github.com/gabrielecirulli/2048/blob/master/CONTRIBUTING.md)
 
+## How to Run Locally
+
+1. Fork and clone the repository
+2. Navigate into the project folder
+3. Open `index.html` in any modern web browser
+
+No additional setup or dependencies are required.
+
 ## License
+
 2048 is licensed under the [MIT license.](https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt)
 
 ## Donations
+
 I made this in my spare time, and it's hosted on GitHub (which means I don't have any hosting costs), but if you enjoyed the game and feel like buying me coffee, you can donate at my BTC address: `1Ec6onfsQmoP9kkL3zkpB6c5sA4PVcXU2i`. Thank you very much!
